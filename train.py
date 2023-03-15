@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import numpy as np 
 
-def save_checkpoint(model_state, filename='checkpoints.tar'): 
+def save_checkpoint(model_state, filename='checkpoints/checkpoints.tar'): 
     print("-> Saving checkpoint") 
     torch.save(model_state, filename)      
     
@@ -24,11 +24,10 @@ def train(dataset, model, args, load_model=False):
         
     # WARNING: everytime we set load_model=False, it overwrites the previously saved file.
     if load_model: 
-        load_checkpoint(torch.load('checkpoints.tar'), model, optimizer) 
+        load_checkpoint(torch.load('checkpoints/checkpoints.tar'), model, optimizer) 
         
     mean_loss = []
     loss_history = []
-    perplexity_history = []
     
     for epoch in range(args.max_epochs): 
         
@@ -60,10 +59,8 @@ def train(dataset, model, args, load_model=False):
             loop.set_postfix(loss=loss.item())
         
         avg_loss = sum(mean_loss)/len(mean_loss)
-        perplexity = np.exp(avg_loss)
         loss_history.append(avg_loss)
-        perplexity_history.append(perplexity) 
         
-        print(f"\033[34m EPOCH {epoch + 1}: \033[0m Mean loss {avg_loss:.3f}, \033[0m Perplexity {perplexity:.3f}")
+        print(f"\033[34m EPOCH {epoch + 1}: \033[0m Mean loss {avg_loss:.3f}")
         
-    return loss_history, perplexity_history
+    return loss_history
